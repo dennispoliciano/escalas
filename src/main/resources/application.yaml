@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: escalas
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/escalas
+    username: ${DB_USERNAME:admin}
+    password: ${DB_PASSWORD:Admin123!}
+    driver-class-name: org.postgresql.Driver
