@@ -20,11 +20,11 @@ public class Group {
     protected Group(){
     }
 
-    public Group(String name, String code, String type, Boolean active) {
+    public Group(String name, String code, String type) {
         this.name = name;
         this.code = code;
         this.type = type;
-        this.active = active;
+        this.active = true;
     }
 
     public Long getId() {

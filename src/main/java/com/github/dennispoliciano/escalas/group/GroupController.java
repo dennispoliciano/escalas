@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.group;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 @RequestMapping("groups")
 public class GroupController {
 
+    @Autowired
     private GroupRepository groupRepository;
 
     @GetMapping

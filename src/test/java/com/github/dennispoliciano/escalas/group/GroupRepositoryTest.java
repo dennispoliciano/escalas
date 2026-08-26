@@ -18,7 +18,7 @@ public class GroupRepositoryTest extends AbstractIntegrationTest {
 
     @Test
     public void mustSaveAndReturnAGroup() {
-        Group group = new Group("Louvor","pln-lv-01", "Louvor", true);
+        Group group = new Group("Louvor","pln-lv-01", "Louvor");
         Group persistedGroup = groupRepository.save(group);
         assertNotNull(persistedGroup.getId());
     }
