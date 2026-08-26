@@ -1,13 +1,17 @@
 package com.github.dennispoliciano.escalas.function;
 
+import com.github.dennispoliciano.escalas.group.Group;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="functions")
+@Table(name = "functions")
 public class Function {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -15,18 +19,33 @@ public class Function {
     private String name;
     private String icon;
     private Boolean active;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private Group group;
 
     protected Function() {
     }
 
-    public Function(String name, String icon) {
+    public Function(String name, String icon, Group group) {
         this.name = name;
         this.icon = icon;
         this.active = true;
+        setGroup(group);
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        if (group == null) {
+            throw new IllegalArgumentException("O campo 'group' não pode ser nulo.");
+        }
+        this.group = group;
     }
 
     public void setId(Long id) {
