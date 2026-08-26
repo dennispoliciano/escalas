@@ -1,20 +1,19 @@
 package com.github.dennispoliciano.escalas.organization;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@RequestMapping("organization")
+@RestController
+@RequestMapping("organizations")
 public class OrganizationController {
 
+    @Autowired
     private OrganizationRepository organizationRepository;
 
     @PostMapping
-    public Organization createOrganization(Organization organization) {
+    public Organization createOrganization(@RequestBody Organization organization) {
         organizationRepository.save(organization);
         return organization;
     }
