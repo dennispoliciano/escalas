@@ -21,6 +21,7 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
+    @NotBlank
     private String name;
 
     @NotBlank
@@ -32,6 +33,7 @@ public class Member {
     private String phone;
 
     private LocalDate birthDate;
+    private Integer score;
     private Boolean active;
 
     protected Member() {
@@ -42,6 +44,7 @@ public class Member {
         this.email = email;
         this.birthDate = birthDate;
         this.active = true;
+        this.score = 0;
         setPhone(phone);
     }
 
