@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "organizations")
@@ -12,10 +13,19 @@ public class Organization {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+
+    @NotBlank
     private String code;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String type;
+
+    @NotBlank
     private String address;
+
     private Boolean active;
 
     protected Organization(){

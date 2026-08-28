@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.organization;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ public class OrganizationController {
     private OrganizationRepository organizationRepository;
 
     @PostMapping
-    public Organization createOrganization(@RequestBody Organization organization) {
+    public Organization createOrganization(@Valid @RequestBody Organization organization) {
         organizationRepository.save(organization);
         return organization;
     }
