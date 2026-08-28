@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.group;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class GroupController {
     }
 
     @PostMapping
-    public Group save(@RequestBody Group group) {
+    public Group save(@Valid @RequestBody Group group) {
         return groupRepository.save(group);
     }
 }

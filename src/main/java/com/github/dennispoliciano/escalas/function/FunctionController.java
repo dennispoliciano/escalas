@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.function;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +18,7 @@ public class FunctionController {
     private FunctionRepository functionRepository;
 
     @PostMapping
-    public Function save(@RequestBody Function function) {
+    public Function save(@Valid @RequestBody Function function) {
         return functionRepository.save(function);
     }
 
