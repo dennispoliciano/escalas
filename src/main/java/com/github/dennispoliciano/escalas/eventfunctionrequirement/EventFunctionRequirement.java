@@ -16,7 +16,7 @@ import jakarta.persistence.Table;
 public class EventFunctionRequirement {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -28,7 +28,6 @@ public class EventFunctionRequirement {
     private Function function;
 
     private Integer requiredQuantity;
-    private Boolean active;
 
     protected EventFunctionRequirement() {
     }
@@ -37,7 +36,6 @@ public class EventFunctionRequirement {
         this.event = event;
         this.function = function;
         this.requiredQuantity = requiredQuantity;
-        this.active = true;
     }
 
     public Long getId() {
@@ -72,11 +70,4 @@ public class EventFunctionRequirement {
         this.requiredQuantity = requiredQuantity;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
 }
