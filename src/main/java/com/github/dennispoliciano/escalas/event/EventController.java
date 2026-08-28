@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.event;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,11 +19,11 @@ public class EventController {
 
     @GetMapping
     public List<Event> findAllByActiveTrue(){
-        return eventRepository.findAllByActiveTrue();
+        return eventRepository.findAll();
     }
 
     @PostMapping
-    public Event save(@RequestBody Event event){
+    public Event save(@Valid @RequestBody Event event){
         return eventRepository.save(event);
     }
 }

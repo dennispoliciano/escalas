@@ -40,6 +40,7 @@ public class EventRepositoryTest extends AbstractIntegrationTest {
 
         assertNotNull(persistedEvent.getId());
         assertEquals(1, events.size());
+        assertNotNull(persistedEvent.getOrganization());
     }
 
     @Test
