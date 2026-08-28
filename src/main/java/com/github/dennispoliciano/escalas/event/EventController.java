@@ -18,7 +18,7 @@ public class EventController {
     EventRepository eventRepository;
 
     @GetMapping
-    public List<Event> findAllByActiveTrue(){
+    public List<Event> findAll(){
         return eventRepository.findAll();
     }
 
