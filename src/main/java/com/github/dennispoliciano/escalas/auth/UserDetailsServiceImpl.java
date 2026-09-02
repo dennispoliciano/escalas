@@ -1,5 +1,7 @@
-package com.github.dennispoliciano.escalas.user;
+package com.github.dennispoliciano.escalas.auth;
 
+import com.github.dennispoliciano.escalas.user.User;
+import com.github.dennispoliciano.escalas.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
