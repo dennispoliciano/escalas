@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.user;
 
+import jakarta.validation.Valid;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,7 +41,7 @@ public class AuthController {
 
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void register(@RequestBody RegisterRequest request) {
+    public void register(@Valid @RequestBody RegisterRequest request) {
         User user = new User(request.email(), passwordEncoder.encode(request.password()));
         userRepository.save(user);
     }
