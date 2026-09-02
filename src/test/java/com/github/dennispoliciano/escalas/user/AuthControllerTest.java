@@ -81,4 +81,14 @@ public class AuthControllerTest extends AbstractIntegrationTest {
         assertNotEquals(rawPassword, persistedUser.getPassword());
         assertTrue(passwordEncoder.matches(rawPassword, persistedUser.getPassword()));
     }
+
+    @Test
+    void whenRegisterEmailIsInvalidThenRequestFails() throws Exception {
+        mockMvc.perform(post("/auth/register")
+                        .contentType("application/json")
+                        .content("""
+                    {"email":"email-invalido","password":"senha123"}
+                    """))
+                .andExpect(status().isBadRequest());
+    }
 }

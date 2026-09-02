@@ -1,6 +1,8 @@
 package com.github.dennispoliciano.escalas.user;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -53,6 +55,11 @@ public class AuthController {
     record LoginRequest(String email, String password) {
     }
 
-    record RegisterRequest(String email, String password) {
+    record RegisterRequest(
+            @NotBlank(message = "O campo 'email' não pode ser vazio.")
+            @Email(message = "O campo 'email' deve ser um endereço de e-mail válido.")
+            String email,
+            @NotBlank(message = "O campo 'password' não pode ser vazio.")
+            String password) {
     }
 }
