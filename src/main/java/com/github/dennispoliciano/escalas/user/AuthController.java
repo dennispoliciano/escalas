@@ -4,6 +4,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,9 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthController(AuthenticationManager authenticationManager) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("login")
@@ -33,10 +38,20 @@ public class AuthController {
         }
     }
 
+    @PostMapping("register")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void register(@RequestBody RegisterRequest request) {
+        User user = new User(request.email(), passwordEncoder.encode(request.password()));
+        userRepository.save(user);
+    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     static class ResponseStatusAuthException extends RuntimeException {
     }
 
     record LoginRequest(String email, String password) {
+    }
+
+    record RegisterRequest(String email, String password) {
     }
 }
