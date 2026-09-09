@@ -24,20 +24,23 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     @PostMapping("login")
-    public String login(@RequestBody LoginRequest request) {
+    public TokenResponse login(@RequestBody LoginRequest request) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.email(), request.password())
             );
-            return "Login realizado com sucesso.";
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            return new TokenResponse(jwtService.generateToken(userPrincipal));
         } catch (BadCredentialsException e) {
             throw new ResponseStatusAuthException();
         }
@@ -55,6 +58,9 @@ public class AuthController {
     }
 
     record LoginRequest(String email, String password) {
+    }
+
+    record TokenResponse(String token) {
     }
 
     record RegisterRequest(

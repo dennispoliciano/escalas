@@ -1,9 +1,11 @@
 package com.github.dennispoliciano.escalas.auth;
 
+import tools.jackson.databind.ObjectMapper;
 import com.github.dennispoliciano.escalas.AbstractIntegrationTest;
 import com.github.dennispoliciano.escalas.user.User;
 import com.github.dennispoliciano.escalas.user.UserRepository;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -31,17 +34,32 @@ public class AuthControllerTest extends AbstractIntegrationTest {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @Test
-    void whenCredentialsAreValidThenLoginSucceeds() throws Exception {
+    void whenCredentialsAreValidThenLoginReturnsValidToken() throws Exception {
         User user = new User("joao@email.com", passwordEncoder.encode("senha123"));
         userRepository.save(user);
 
-        mockMvc.perform(post("/auth/login")
+        String response = mockMvc.perform(post("/auth/login")
                         .contentType("application/json")
                         .content("""
                     {"email":"joao@email.com","password":"senha123"}
                     """))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").isNotEmpty())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        String token = objectMapper.readValue(response, AuthController.TokenResponse.class).token();
+
+        assertTrue(jwtService.isTokenValid(token));
+        assertEquals("joao@email.com", jwtService.extractEmail(token));
     }
 
     @Test
