@@ -1,6 +1,7 @@
 package com.github.dennispoliciano.escalas.groupmembership;
 
 import tools.jackson.databind.ObjectMapper;
+import com.github.dennispoliciano.escalas.auth.WithMockedSecurityBeans;
 import com.github.dennispoliciano.escalas.function.Function;
 import com.github.dennispoliciano.escalas.group.Group;
 import com.github.dennispoliciano.escalas.group.GroupRepository;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GroupMembershipController.class)
+@WithMockedSecurityBeans
 public class GroupMembershipControllerTest {
 
     @Autowired

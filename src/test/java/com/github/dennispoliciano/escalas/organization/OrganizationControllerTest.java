@@ -1,6 +1,7 @@
 package com.github.dennispoliciano.escalas.organization;
 
 import tools.jackson.databind.ObjectMapper;
+import com.github.dennispoliciano.escalas.auth.WithMockedSecurityBeans;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(OrganizationController.class)
+@WithMockedSecurityBeans
 public class OrganizationControllerTest {
 
     @Autowired

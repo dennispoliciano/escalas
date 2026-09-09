@@ -1,6 +1,7 @@
 package com.github.dennispoliciano.escalas.function;
 
 import tools.jackson.databind.ObjectMapper;
+import com.github.dennispoliciano.escalas.auth.WithMockedSecurityBeans;
 import com.github.dennispoliciano.escalas.group.Group;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -16,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(FunctionController.class)
+@WithMockedSecurityBeans
 public class FunctionControllerTest {
 
     @Autowired
