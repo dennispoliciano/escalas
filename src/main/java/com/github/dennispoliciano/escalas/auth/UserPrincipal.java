@@ -1,5 +1,6 @@
-package com.github.dennispoliciano.escalas.user;
+package com.github.dennispoliciano.escalas.auth;
 
+import com.github.dennispoliciano.escalas.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

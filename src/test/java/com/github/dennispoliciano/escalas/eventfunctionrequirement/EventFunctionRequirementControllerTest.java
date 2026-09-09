@@ -1,6 +1,7 @@
 package com.github.dennispoliciano.escalas.eventfunctionrequirement;
 
 import tools.jackson.databind.ObjectMapper;
+import com.github.dennispoliciano.escalas.auth.WithMockedSecurityBeans;
 import com.github.dennispoliciano.escalas.event.Event;
 import com.github.dennispoliciano.escalas.function.Function;
 import com.github.dennispoliciano.escalas.group.Group;
@@ -21,6 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(EventFunctionRequirementController.class)
+@WithMockedSecurityBeans
 public class EventFunctionRequirementControllerTest {
 
     @Autowired

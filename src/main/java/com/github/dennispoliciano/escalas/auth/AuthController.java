@@ -1,5 +1,7 @@
-package com.github.dennispoliciano.escalas.user;
+package com.github.dennispoliciano.escalas.auth;
 
+import com.github.dennispoliciano.escalas.user.User;
+import com.github.dennispoliciano.escalas.user.UserRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

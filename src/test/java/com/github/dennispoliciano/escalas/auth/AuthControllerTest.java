@@ -1,6 +1,8 @@
-package com.github.dennispoliciano.escalas.user;
+package com.github.dennispoliciano.escalas.auth;
 
 import com.github.dennispoliciano.escalas.AbstractIntegrationTest;
+import com.github.dennispoliciano.escalas.user.User;
+import com.github.dennispoliciano.escalas.user.UserRepository;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
