@@ -2,6 +2,8 @@ package com.github.dennispoliciano.escalas.user;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,15 +27,22 @@ public class User {
     @NotBlank
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private AuthProvider authProvider;
+
     private Boolean active;
 
     protected User() {
     }
 
+
+
     public User(String email, String password) {
         this.email = email;
         this.password = password;
         this.active = true;
+        this.authProvider = AuthProvider.LOCAL;
     }
 
     public Long getId() {
@@ -54,6 +63,14 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public AuthProvider getAuthProvider() {
+        return authProvider;
+    }
+
+    public void setAuthProvider(AuthProvider authProvider) {
+        this.authProvider = authProvider;
     }
 
     public void setPassword(String password) {
