@@ -3,6 +3,7 @@ package com.github.dennispoliciano.escalas.groupmembership;
 import com.github.dennispoliciano.escalas.group.Group;
 import com.github.dennispoliciano.escalas.group.GroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -29,6 +30,7 @@ public class GroupMembershipController {
         return groupMembershipRepository.findByGroupAndActiveTrue(group);
     }
 
+    @PreAuthorize("hasRole('ORG_ADMIN')")
     @PostMapping
     public GroupMembership save(@RequestBody GroupMembership groupMembership) {
         return groupMembershipRepository.save(groupMembership);

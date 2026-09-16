@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.auth;
 
+import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipRepository;
 import com.github.dennispoliciano.escalas.user.AuthProvider;
 import com.github.dennispoliciano.escalas.user.User;
 import com.github.dennispoliciano.escalas.user.UserRepository;
@@ -20,16 +21,19 @@ import java.util.UUID;
 public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final UserRepository userRepository;
+    private final OrgMembershipRepository orgMembershipRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public OAuth2AuthenticationSuccessHandler(
             UserRepository userRepository,
+            OrgMembershipRepository orgMembershipRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService
     ) {
         this.userRepository = userRepository;
+        this.orgMembershipRepository = orgMembershipRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -47,7 +51,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         User user = userRepository.findByEmail(email)
                 .orElseGet(() -> createGoogleUser(email));
 
-        UserPrincipal userPrincipal = new UserPrincipal(user);
+        UserPrincipal userPrincipal = new UserPrincipal(user, orgMembershipRepository.findByUserId(user.getId()));
         String token = jwtService.generateToken(userPrincipal);
 
         response.setContentType("application/json");
