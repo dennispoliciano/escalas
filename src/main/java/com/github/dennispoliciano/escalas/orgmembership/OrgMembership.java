@@ -19,20 +19,18 @@ public class OrgMembership {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    User user;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "org_id", nullable = false)
-    Organization organization;
+    private Organization organization;
 
     @Enumerated(EnumType.STRING)
-    Role role;
-
-    private Boolean active;
+    private Role role;
 
 
     protected OrgMembership() {
@@ -42,7 +40,6 @@ public class OrgMembership {
         this.user = user;
         this.organization = organization;
         this.role = role;
-        this.active = true;
     }
 
     public Long getId() {
@@ -77,11 +74,4 @@ public class OrgMembership {
         this.role = role;
     }
 
-    public Boolean getActive() {
-        return active;
-    }
-
-    public void setActive(Boolean active) {
-        this.active = active;
-    }
 }

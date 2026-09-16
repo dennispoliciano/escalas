@@ -44,7 +44,7 @@ public class OrgMembershipRepositoryTest extends AbstractIntegrationTest {
         assertEquals(Role.ORG_ADMIN, membershipInOrgA.get().getRole());
         assertEquals(Role.MEMBER, membershipInOrgB.get().getRole());
 
-        assertEquals(2, orgMembershipRepository.findByUser(user).size());
+        assertEquals(2, orgMembershipRepository.findByUserId(user.getId()).size());
     }
 
 }

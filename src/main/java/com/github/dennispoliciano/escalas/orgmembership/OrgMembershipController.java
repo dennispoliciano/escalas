@@ -23,13 +23,8 @@ public class OrgMembershipController {
     }
 
     @GetMapping
-    public List<OrgMembership> findAll() {
-        return orgMembershipRepository.findAll();
-    }
-
-    @GetMapping
-    public List<OrgMembership> findByUserId(@RequestParam User user) {
-        return orgMembershipRepository.findByUser(user);
+    public List<OrgMembership> findByUserId(@RequestParam Long userId) {
+        return orgMembershipRepository.findByUserId(userId);
     }
 
 }
