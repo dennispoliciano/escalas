@@ -1,6 +1,7 @@
 package com.github.dennispoliciano.escalas.auth;
 
 import com.github.dennispoliciano.escalas.AbstractIntegrationTest;
+import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipRepository;
 import com.github.dennispoliciano.escalas.user.User;
 import com.github.dennispoliciano.escalas.user.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,9 @@ public class JwtAuthenticationFilterTest extends AbstractIntegrationTest {
     private UserRepository userRepository;
 
     @Autowired
+    private OrgMembershipRepository orgMembershipRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -49,7 +53,7 @@ public class JwtAuthenticationFilterTest extends AbstractIntegrationTest {
         User user = new User("joao@email.com", passwordEncoder.encode("senha123"));
         userRepository.save(user);
 
-        String token = jwtService.generateToken(new UserPrincipal(user));
+        String token = jwtService.generateToken(new UserPrincipal(user, orgMembershipRepository.findByUserId(user.getId())));
 
         mockMvc.perform(get("/test/protected")
                         .header("Authorization", "Bearer " + token))

@@ -2,6 +2,7 @@ package com.github.dennispoliciano.escalas.group;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,6 +19,7 @@ public class GroupController {
        return groupRepository.findAll();
     }
 
+    @PreAuthorize("hasRole('ORG_ADMIN')")
     @PostMapping
     public Group save(@Valid @RequestBody Group group) {
         return groupRepository.save(group);
