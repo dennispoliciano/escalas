@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### IA / agentes ###
+.claude/
+CLAUDE.md
+AGENTS.md

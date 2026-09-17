@@ -25,6 +25,10 @@ public class UserPrincipal implements UserDetails {
                 .collect(Collectors.toSet());
     }
 
+    public User getUser() {
+        return user;
+    }
+
     @Override
     public String getUsername() {
         return user.getEmail();

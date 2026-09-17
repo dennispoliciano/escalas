@@ -4,6 +4,7 @@ import com.github.dennispoliciano.escalas.auth.JwtAuthenticationFilter;
 import com.github.dennispoliciano.escalas.auth.OAuth2AuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
@@ -43,6 +44,7 @@ public class SecurityConfig {
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/organizations/onboarding").authenticated()
                         .requestMatchers("/test/protected").authenticated()
                         .anyRequest().permitAll()
                 )
