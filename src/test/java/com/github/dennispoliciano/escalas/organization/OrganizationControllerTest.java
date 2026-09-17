@@ -2,6 +2,7 @@ package com.github.dennispoliciano.escalas.organization;
 
 import tools.jackson.databind.ObjectMapper;
 import com.github.dennispoliciano.escalas.auth.WithMockedSecurityBeans;
+import com.github.dennispoliciano.escalas.onboarding.OnboardingService;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,9 @@ public class OrganizationControllerTest {
 
     @MockitoBean
     private OrganizationRepository organizationRepository;
+
+    @MockitoBean
+    private OnboardingService onboardingService;
 
     @Test
     void whenOrganizationExists_thenReturns200AndBody() throws Exception {
