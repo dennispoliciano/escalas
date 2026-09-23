@@ -2,8 +2,8 @@ package com.github.dennispoliciano.escalas.accessrequest;
 
 import com.github.dennispoliciano.escalas.organization.Organization;
 import com.github.dennispoliciano.escalas.organization.OrganizationRepository;
-import com.github.dennispoliciano.escalas.orgmembership.OrgMembership;
 import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipRepository;
+import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipService;
 import com.github.dennispoliciano.escalas.orgmembership.Role;
 import com.github.dennispoliciano.escalas.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,9 @@ public class AccessRequestService {
 
     @Autowired
     private OrgMembershipRepository orgMembershipRepository;
+
+    @Autowired
+    private OrgMembershipService orgMembershipService;
 
     public AccessRequest create(User user, String organizationCode) {
         Organization org = organizationRepository.findByCode(organizationCode)
@@ -48,9 +51,7 @@ public class AccessRequestService {
         accessRequest.setStatus(AccessRequestStatus.APPROVED);
         accessRequestRepository.save(accessRequest);
 
-        orgMembershipRepository.findByUserAndOrganization(accessRequest.getUser(), accessRequest.getOrganization())
-                .orElseGet(() -> orgMembershipRepository.save(
-                        new OrgMembership(accessRequest.getUser(), accessRequest.getOrganization(), Role.MEMBER)));
+        orgMembershipService.createMember(accessRequest.getUser(), accessRequest.getOrganization());
 
         return accessRequest;
     }
