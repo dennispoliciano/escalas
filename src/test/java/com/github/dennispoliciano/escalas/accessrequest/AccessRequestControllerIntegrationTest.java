@@ -5,7 +5,9 @@ import com.github.dennispoliciano.escalas.auth.JwtService;
 import com.github.dennispoliciano.escalas.auth.UserPrincipal;
 import com.github.dennispoliciano.escalas.organization.Organization;
 import com.github.dennispoliciano.escalas.organization.OrganizationRepository;
+import com.github.dennispoliciano.escalas.orgmembership.OrgMembership;
 import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipRepository;
+import com.github.dennispoliciano.escalas.orgmembership.Role;
 import com.github.dennispoliciano.escalas.user.User;
 import com.github.dennispoliciano.escalas.user.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -16,8 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -135,6 +141,66 @@ public class AccessRequestControllerIntegrationTest extends AbstractIntegrationT
 
         mockMvc.perform(get("/organizations/" + org.getId() + "/access-requests"))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void whenOrgAdminApprovesPendingRequest_thenCreatesMembershipWithMemberRoleAndMarksRequestApproved() throws Exception {
+        User admin = userRepository.save(new User("admin.approve@email.com", passwordEncoder.encode("senha123")));
+        Organization org = organizationRepository.save(new Organization("igreja-approve", "Igreja Approve", "church", "Rua Approve, 1"));
+        orgMembershipRepository.save(new OrgMembership(admin, org, Role.ORG_ADMIN));
+
+        User applicant = userRepository.save(new User("applicant.approve@email.com", passwordEncoder.encode("senha123")));
+        AccessRequest accessRequest = accessRequestRepository.save(new AccessRequest(applicant, org));
+
+        mockMvc.perform(put("/organizations/" + org.getId() + "/access-requests/" + accessRequest.getId() + "/approve")
+                        .header("Authorization", "Bearer " + tokenFor(admin)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("APPROVED"));
+
+        AccessRequest updated = accessRequestRepository.findById(accessRequest.getId()).orElseThrow();
+        assertEquals(AccessRequestStatus.APPROVED, updated.getStatus());
+
+        assertTrue(orgMembershipRepository.findByUserAndOrganization(applicant, org)
+                .filter(membership -> membership.getRole() == Role.MEMBER)
+                .isPresent());
+    }
+
+    @Test
+    void whenOrgAdminRejectsPendingRequest_thenDoesNotCreateMembershipAndMarksRequestRejected() throws Exception {
+        User admin = userRepository.save(new User("admin.reject@email.com", passwordEncoder.encode("senha123")));
+        Organization org = organizationRepository.save(new Organization("igreja-reject", "Igreja Reject", "church", "Rua Reject, 1"));
+        orgMembershipRepository.save(new OrgMembership(admin, org, Role.ORG_ADMIN));
+
+        User applicant = userRepository.save(new User("applicant.reject@email.com", passwordEncoder.encode("senha123")));
+        AccessRequest accessRequest = accessRequestRepository.save(new AccessRequest(applicant, org));
+
+        mockMvc.perform(put("/organizations/" + org.getId() + "/access-requests/" + accessRequest.getId() + "/reject")
+                        .header("Authorization", "Bearer " + tokenFor(admin)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").value("REJECTED"));
+
+        AccessRequest updated = accessRequestRepository.findById(accessRequest.getId()).orElseThrow();
+        assertEquals(AccessRequestStatus.REJECTED, updated.getStatus());
+
+        assertFalse(orgMembershipRepository.findByUserAndOrganization(applicant, org).isPresent());
+    }
+
+    @Test
+    void whenTryingToResolveAnAlreadyResolvedRequest_thenReturns409() throws Exception {
+        User admin = userRepository.save(new User("admin.conflict@email.com", passwordEncoder.encode("senha123")));
+        Organization org = organizationRepository.save(new Organization("igreja-conflict", "Igreja Conflict", "church", "Rua Conflict, 1"));
+        orgMembershipRepository.save(new OrgMembership(admin, org, Role.ORG_ADMIN));
+
+        User applicant = userRepository.save(new User("applicant.conflict@email.com", passwordEncoder.encode("senha123")));
+        AccessRequest accessRequest = accessRequestRepository.save(new AccessRequest(applicant, org));
+
+        mockMvc.perform(put("/organizations/" + org.getId() + "/access-requests/" + accessRequest.getId() + "/approve")
+                        .header("Authorization", "Bearer " + tokenFor(admin)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(put("/organizations/" + org.getId() + "/access-requests/" + accessRequest.getId() + "/reject")
+                        .header("Authorization", "Bearer " + tokenFor(admin)))
+                .andExpect(status().isConflict());
     }
 
 }
