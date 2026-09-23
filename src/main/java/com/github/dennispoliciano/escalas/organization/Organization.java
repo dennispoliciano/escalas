@@ -1,5 +1,6 @@
 package com.github.dennispoliciano.escalas.organization;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,6 +16,7 @@ public class Organization {
     private Long id;
 
     @NotBlank
+    @Column(nullable = false, unique = true)
     private String code;
 
     @NotBlank
