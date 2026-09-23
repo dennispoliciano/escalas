@@ -2,9 +2,7 @@ package com.github.dennispoliciano.escalas.orginvite;
 
 import com.github.dennispoliciano.escalas.organization.Organization;
 import com.github.dennispoliciano.escalas.organization.OrganizationRepository;
-import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipRepository;
 import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipService;
-import com.github.dennispoliciano.escalas.orgmembership.Role;
 import com.github.dennispoliciano.escalas.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,16 +26,13 @@ public class OrganizationInviteService {
     private OrganizationInviteRepository organizationInviteRepository;
 
     @Autowired
-    private OrgMembershipRepository orgMembershipRepository;
-
-    @Autowired
     private OrgMembershipService orgMembershipService;
 
     public OrganizationInvite create(Long organizationId, User actingUser) {
         Organization org = organizationRepository.findById(organizationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Organização não encontrada"));
 
-        requireOrgAdmin(actingUser, org);
+        orgMembershipService.requireOrgAdmin(actingUser, org);
 
         String token = UUID.randomUUID().toString();
         Instant expiresAt = Instant.now().plus(EXPIRATION_DAYS, ChronoUnit.DAYS);
@@ -48,7 +43,9 @@ public class OrganizationInviteService {
 
     @Transactional
     public OrganizationInvite accept(String token, User actingUser) {
-        OrganizationInvite invite = organizationInviteRepository.findByToken(token)
+        // Lock pessimista: garante que duas requisições concorrentes com o mesmo token
+        // não passem ambas pela checagem de "used" antes de qualquer uma gravar a mudança.
+        OrganizationInvite invite = organizationInviteRepository.findWithLockByToken(token)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Convite não encontrado"));
 
         if (Boolean.TRUE.equals(invite.getUsed())) {
@@ -59,19 +56,11 @@ public class OrganizationInviteService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Convite expirado");
         }
 
+        // Convite é uso único por definição (ver card ESC-018): mesmo que o usuário já seja
+        // membro da organização, o convite ainda é consumido, sem rebaixar a role existente.
         orgMembershipService.createMember(actingUser, invite.getOrganization());
 
         invite.setUsed(true);
         return organizationInviteRepository.save(invite);
-    }
-
-    private void requireOrgAdmin(User user, Organization organization) {
-        boolean isOrgAdminOfThisOrganization = orgMembershipRepository.findByUserAndOrganization(user, organization)
-                .map(membership -> membership.getRole() == Role.ORG_ADMIN)
-                .orElse(false);
-
-        if (!isOrgAdminOfThisOrganization) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário não é administrador desta organização");
-        }
     }
 }

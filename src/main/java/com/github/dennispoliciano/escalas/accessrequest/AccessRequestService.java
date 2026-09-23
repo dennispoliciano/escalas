@@ -2,9 +2,7 @@ package com.github.dennispoliciano.escalas.accessrequest;
 
 import com.github.dennispoliciano.escalas.organization.Organization;
 import com.github.dennispoliciano.escalas.organization.OrganizationRepository;
-import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipRepository;
 import com.github.dennispoliciano.escalas.orgmembership.OrgMembershipService;
-import com.github.dennispoliciano.escalas.orgmembership.Role;
 import com.github.dennispoliciano.escalas.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,9 +20,6 @@ public class AccessRequestService {
 
     @Autowired
     private AccessRequestRepository accessRequestRepository;
-
-    @Autowired
-    private OrgMembershipRepository orgMembershipRepository;
 
     @Autowired
     private OrgMembershipService orgMembershipService;
@@ -70,22 +65,12 @@ public class AccessRequestService {
         AccessRequest accessRequest = accessRequestRepository.findByIdAndOrganizationId(requestId, orgId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Solicitação de acesso não encontrada"));
 
-        requireOrgAdmin(actingUser, accessRequest.getOrganization());
+        orgMembershipService.requireOrgAdmin(actingUser, accessRequest.getOrganization());
 
         if (accessRequest.getStatus() != AccessRequestStatus.PENDING) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Solicitação de acesso já foi processada");
         }
 
         return accessRequest;
-    }
-
-    private void requireOrgAdmin(User user, Organization organization) {
-        boolean isOrgAdminOfThisOrganization = orgMembershipRepository.findByUserAndOrganization(user, organization)
-                .map(membership -> membership.getRole() == Role.ORG_ADMIN)
-                .orElse(false);
-
-        if (!isOrgAdminOfThisOrganization) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Usuário não é administrador desta organização");
-        }
     }
 }

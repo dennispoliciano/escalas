@@ -82,6 +82,23 @@ public class OrganizationInviteControllerIntegrationTest extends AbstractIntegra
     }
 
     @Test
+    void whenOrgAdminOfAnotherOrganizationGeneratesInvite_thenReturns403() throws Exception {
+        User adminOfOrgA = userRepository.save(new User("admin.orga@email.com", passwordEncoder.encode("senha123")));
+        Organization orgA = organizationRepository.save(new Organization("igreja-invite-a", "Igreja Invite A", "church", "Rua Invite A, 1"));
+        orgMembershipRepository.save(new OrgMembership(adminOfOrgA, orgA, Role.ORG_ADMIN));
+
+        Organization orgB = organizationRepository.save(new Organization("igreja-invite-b", "Igreja Invite B", "church", "Rua Invite B, 1"));
+
+        mockMvc.perform(post("/organizations/" + orgB.getId() + "/invites")
+                        .header("Authorization", "Bearer " + tokenFor(adminOfOrgA)))
+                .andExpect(status().isForbidden());
+
+        assertEquals(0, organizationInviteRepository.findAll().stream()
+                .filter(invite -> invite.getOrganization().getId().equals(orgB.getId()))
+                .count());
+    }
+
+    @Test
     void whenOrganizationDoesNotExist_thenReturns404() throws Exception {
         User admin = userRepository.save(new User("admin.invite.404@email.com", passwordEncoder.encode("senha123")));
         Organization org = organizationRepository.save(new Organization("igreja-invite-404", "Igreja Invite 404", "church", "Rua Invite, 3"));
