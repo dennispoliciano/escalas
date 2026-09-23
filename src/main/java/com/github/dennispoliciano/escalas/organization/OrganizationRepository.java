@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface OrganizationRepository extends JpaRepository<Organization,Long> {
     Optional<Organization> findByName(String name);
+
+    Optional<Organization> findByCode(String code);
 }
