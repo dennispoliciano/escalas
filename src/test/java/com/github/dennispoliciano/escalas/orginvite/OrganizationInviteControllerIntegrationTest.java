@@ -67,7 +67,9 @@ public class OrganizationInviteControllerIntegrationTest extends AbstractIntegra
                 .andExpect(jsonPath("$.token").isNotEmpty())
                 .andExpect(jsonPath("$.expiresAt").isNotEmpty());
 
-        assertEquals(1, organizationInviteRepository.findAll().size());
+        assertEquals(1, organizationInviteRepository.findAll().stream()
+                .filter(invite -> invite.getOrganization().getId().equals(org.getId()))
+                .count());
     }
 
     @Test
