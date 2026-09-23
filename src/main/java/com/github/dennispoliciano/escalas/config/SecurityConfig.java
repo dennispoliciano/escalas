@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/organizations/onboarding").authenticated()
                         .requestMatchers(HttpMethod.POST, "/organizations/access-requests").authenticated()
                         .requestMatchers(HttpMethod.GET, "/organizations/*/access-requests").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/invites/*/accept").authenticated()
                         .requestMatchers("/test/protected").authenticated()
                         .anyRequest().permitAll()
                 )
